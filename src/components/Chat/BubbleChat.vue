@@ -35,12 +35,12 @@ const props = defineProps<{ data: Message }>()
   word-break: break-word;
   max-width: 80%;
   width: fit-content;
+  background-color: var(--background-bubble-received);
 }
 
 .bubble-chat.sent {
   align-items: flex-end;
   margin-left: auto;
-  background-color: var(--background-bubble-received);
 }
 
 .bubble-chat.received {
