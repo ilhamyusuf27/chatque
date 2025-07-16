@@ -4,7 +4,7 @@
     <img src="https://img.icons8.com/?size=100&id=13724&format=png&color=000000" alt="Logo" width="150px">
   </a>
 
-  <h3 align="center">Recipenation Web App - Mobile Version</h3>
+  <h3 align="center">ChatQue</h3>
 
   <p align="center">
     <a href="https://github.com/ilhamyusuf27/chatque/issues">Report Bug</a>
