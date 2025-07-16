@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "types": ["vue", "node"],
+    "module": "ESNext",
+    "moduleResolution": "bundler"
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
+}
