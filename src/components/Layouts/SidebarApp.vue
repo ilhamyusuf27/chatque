@@ -29,7 +29,7 @@ onMounted(() => {
 <template>
   <aside class="conversation-sidebar">
     <router-link
-      :to="`/chat/room_id=${room.room_id}`"
+      :to="`/chat/${room.room_id}`"
       v-for="room in customerChatRooms"
       :key="room.room_id"
       class="conversation-item"
@@ -127,7 +127,7 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 </style>

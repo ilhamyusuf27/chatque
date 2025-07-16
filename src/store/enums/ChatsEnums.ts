@@ -1,5 +1,6 @@
 export enum ChatGetter {
   GET_ALL_CUSTOMER_CHAT_ROOM = 'getAllCustomerChatRoom',
+  GET_ACTIVE_ROOM_ID = 'getActiveRoomId',
   GET_CUSTOMER_CHAT_ROOM = 'getCustomerChatRoom',
   GET_MESSAGE_DATA = 'getMessageData',
 }

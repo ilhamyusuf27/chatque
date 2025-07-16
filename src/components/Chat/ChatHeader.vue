@@ -18,14 +18,15 @@ const onImageError = (event: Event) => {
   <div class="chat-header">
     <div class="avatar">
       <img
-        :src="roomData.user_avatar_url"
+        :src="roomData?.user_avatar_url"
         alt="avatar"
         class="avatar-img"
         @error="onImageError($event)"
       />
     </div>
     <div class="chat-information">
-      <p>{{ roomData.name }}</p>
+      <p class="username">{{ roomData?.name }}</p>
+      <span class="user-id">{{ roomData?.user_id }}</span>
     </div>
   </div>
 </template>
@@ -57,7 +58,12 @@ const onImageError = (event: Event) => {
   flex: 1;
 }
 
-.chat-information p {
+.chat-information .username {
   font-weight: 700;
+}
+
+.chat-information .user-id {
+  color: var(--text-secondary);
+  font-size: 14px;
 }
 </style>

@@ -1,6 +1,7 @@
 import type { ChatState, RootState, CustomerChatRooms, ApiResponse, Message } from '@/store/types'
 import type { ActionTree, GetterTree, Module, MutationTree } from 'vuex/types/index.js'
 import { ChatActions, ChatGetter, ChatMutations } from '../enums/ChatsEnums'
+import { isFileMessage } from '@/utils/helpers'
 
 const state: ChatState = {
   customerChatRoom: [],
@@ -25,6 +26,7 @@ const getters: GetterTree<ChatState, RootState> = {
     if (!state.activeRoomId) return []
     return state.messageByRoom[state.activeRoomId] || []
   },
+  [ChatGetter.GET_ACTIVE_ROOM_ID]: (state: ChatState): string | null => state.activeRoomId,
 }
 
 const mutations: MutationTree<ChatState> = {
@@ -78,7 +80,7 @@ const actions: ActionTree<ChatState, RootState> = {
 
   [ChatActions.SELECT_ROOM]({ commit, state }, payload: CustomerChatRooms) {
     if (!state.messageByRoom[payload.room_id]) {
-      const isFile = payload.last_customer_comment_text?.includes('[file]')
+      const type = isFileMessage(payload.last_comment_text) ? 'file' : 'text'
       const hasText = Boolean(payload.last_comment_text)
       console.log('selectroom', payload, hasText)
 
@@ -87,7 +89,7 @@ const actions: ActionTree<ChatState, RootState> = {
             {
               id: 1,
               text: payload.last_comment_text || '',
-              type: isFile ? 'file' : 'text',
+              type,
               timestamp: payload.last_comment_timestamp,
               direction: payload.last_comment_sender_type,
             },
