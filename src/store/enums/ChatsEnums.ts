@@ -9,6 +9,7 @@ export enum ChatActions {
   GET_ALL_CUSTOMER_CHAT_ROOM = 'getAllCustomerChatRoom',
   GET_ACTIVE_CHAT = 'getActiveChat',
   SELECT_ROOM = 'selectRoom',
+  ADD_MESSAGE = 'addMessage',
 }
 
 export enum ChatMutations {

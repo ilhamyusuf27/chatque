@@ -15,7 +15,8 @@ import { RouterView } from 'vue-router'
 <style scoped>
 .container {
   display: flex;
-  height: 100vh;
+  height: 100%;
+  padding: 1rem;
 }
 
 .chat-window {

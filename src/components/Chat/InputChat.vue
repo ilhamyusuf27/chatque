@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ChatActions, ChatGetter } from '@/store/enums/ChatsEnums'
+import type { RootState } from '@/store/types'
+import { ref, onMounted, nextTick, computed } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore<RootState>()
+const roomId = computed(() => store.getters[`chat/${ChatGetter.GET_ACTIVE_ROOM_ID}`])
 
 const content = ref('')
 const textarea = ref(null)
@@ -8,7 +14,7 @@ const autoResize = () => {
   const el: any = textarea.value
   if (!el) return
 
-  el.style.height = 'auto' // Reset dulu
+  el.style.height = 'auto'
   const maxHeight = parseInt(getComputedStyle(el).maxHeight)
 
   if (el.scrollHeight > maxHeight) {
@@ -20,6 +26,31 @@ const autoResize = () => {
   }
 }
 
+const handleKeydown = (event: KeyboardEvent) => {
+  // Kirim pesan jika Enter ditekan tanpa Shift
+  if (event.key === 'Enter' && !event.shiftKey) {
+    // Mencegah perilaku default (membuat baris baru)
+    event.preventDefault()
+    onSubmit()
+  }
+}
+
+const onSubmit = async () => {
+  // Mencegah pengiriman pesan kosong
+  if (content.value.trim() === '') {
+    return
+  }
+  store.dispatch(`chat/${ChatActions.ADD_MESSAGE}`, {
+    roomId: roomId.value,
+    message: content.value,
+  })
+  content.value = ''
+
+  // Reset tinggi textarea setelah mengirim
+  await nextTick() // Tunggu DOM update
+  autoResize()
+}
+
 onMounted(() => {
   autoResize()
 })
@@ -27,7 +58,7 @@ onMounted(() => {
 
 <template>
   <div class="send-message-container">
-    <form class="form-chat">
+    <form class="form-chat" @submit.prevent="onSubmit">
       <textarea
         v-model="content"
         ref="textarea"
@@ -36,10 +67,11 @@ onMounted(() => {
         placeholder="Tulis sesuatu..."
         name="chat"
         @input="autoResize"
+        @keydown="handleKeydown"
         class="auto-textarea"
       />
 
-      <button class="btn-send">
+      <button class="btn-send" type="submit">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -64,6 +96,7 @@ onMounted(() => {
   padding: 0.5rem;
   min-height: 24px;
   border-radius: 2rem;
+  margin: 0 1rem;
 }
 
 .form-chat {
@@ -77,8 +110,8 @@ onMounted(() => {
   color: var(--text-primary);
   border: none;
   flex: 1;
-  min-height: 24px; /* Tinggi 1 baris */
-  max-height: calc(24px * 4); /* Maksimal 4 baris */
+  min-height: 24px;
+  max-height: calc(24px * 4);
   line-height: 24px;
   overflow-y: auto;
   resize: none;

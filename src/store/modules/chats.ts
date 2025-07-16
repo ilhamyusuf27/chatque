@@ -1,25 +1,21 @@
 import type { ChatState, RootState, CustomerChatRooms, ApiResponse, Message } from '@/store/types'
 import type { ActionTree, GetterTree, Module, MutationTree } from 'vuex/types/index.js'
 import { ChatActions, ChatGetter, ChatMutations } from '../enums/ChatsEnums'
-import { isFileMessage } from '@/utils/helpers'
+import { getInitialMessages, isFileMessage } from '@/utils/helpers'
+import moment from 'moment'
 
 const state: ChatState = {
   customerChatRoom: [],
   isLoading: false,
   errorMessage: null,
   activeRoomId: null,
-  messageByRoom: {},
+  messageByRoom: getInitialMessages(),
 }
 
 const getters: GetterTree<ChatState, RootState> = {
   [ChatGetter.GET_ALL_CUSTOMER_CHAT_ROOM]: (state: ChatState): CustomerChatRooms[] =>
     state.customerChatRoom,
   [ChatGetter.GET_CUSTOMER_CHAT_ROOM]: (state: ChatState) => {
-    console.log(
-      'find',
-      state.customerChatRoom.find((chatRoom) => chatRoom.room_id === state.activeRoomId),
-      state.activeRoomId,
-    )
     return state.customerChatRoom.find((chatRoom) => chatRoom.room_id === state.activeRoomId)
   },
   [ChatGetter.GET_MESSAGE_DATA]: (state: ChatState): Message[] => {
@@ -40,19 +36,25 @@ const mutations: MutationTree<ChatState> = {
     state.errorMessage = message
   },
   [ChatMutations.SET_ACTIVE_CHAT](state: ChatState, activeRoomId: string | null) {
+    console.log(activeRoomId)
     state.activeRoomId = activeRoomId
   },
   [ChatMutations.ADD_MESSAGE_FOR_ROOM](
     state: ChatState,
     payload: { roomId: string; message: Message[] },
   ) {
-    console.log('mutations', payload)
     const existingMessages = state.messageByRoom[payload.roomId] || []
     const updatedMessages = [...existingMessages, ...(payload.message || [])]
 
     state.messageByRoom = {
       ...state.messageByRoom,
       [payload.roomId]: updatedMessages,
+    }
+
+    try {
+      localStorage.setItem('chatMessages', JSON.stringify(state.messageByRoom))
+    } catch (error) {
+      console.error('Gagal menyimpan pesan ke localStorage:', error)
     }
   },
 }
@@ -82,7 +84,6 @@ const actions: ActionTree<ChatState, RootState> = {
     if (!state.messageByRoom[payload.room_id]) {
       const type = isFileMessage(payload.last_comment_text) ? 'file' : 'text'
       const hasText = Boolean(payload.last_comment_text)
-      console.log('selectroom', payload, hasText)
 
       const newMessageData: Message[] = hasText
         ? [
@@ -96,18 +97,47 @@ const actions: ActionTree<ChatState, RootState> = {
           ]
         : []
 
-      console.log('actions', {
-        payload,
-        roomId: payload.room_id,
-        message: newMessageData,
-      })
-
       commit(ChatMutations.ADD_MESSAGE_FOR_ROOM, {
         roomId: payload.room_id,
         message: newMessageData,
       })
     }
     commit(ChatMutations.SET_ACTIVE_CHAT, payload.room_id)
+  },
+
+  [ChatActions.ADD_MESSAGE]({ commit, state }, payload: { roomId: string; message: string }) {
+    const existingMessages = state.messageByRoom[payload.roomId] || []
+
+    const lastId =
+      existingMessages.length > 0 ? existingMessages[existingMessages.length - 1].id : 0
+    const newId = lastId + 1
+
+    const newMessage: Message = {
+      id: newId,
+      type: 'text',
+      text: payload.message,
+      timestamp: moment().toISOString(),
+      direction: 'sent',
+    }
+
+    commit(ChatMutations.ADD_MESSAGE_FOR_ROOM, {
+      roomId: payload.roomId,
+      message: [newMessage],
+    })
+
+    const currentRoom = state.customerChatRoom.find((room) => room.room_id === payload.roomId)
+    if (!currentRoom) return
+
+    const updatedRoomData: CustomerChatRooms = {
+      ...currentRoom,
+      last_comment_text: payload.message,
+      last_comment_timestamp: newMessage.timestamp,
+    }
+
+    const otherChatRooms = state.customerChatRoom.filter((room) => room.room_id !== payload.roomId)
+    const updatedChatRooms = [updatedRoomData, ...otherChatRooms]
+
+    commit(ChatMutations.SET_CUSTOMER_CHAT_ROOM, updatedChatRooms)
   },
 }
 

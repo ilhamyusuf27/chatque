@@ -27,7 +27,7 @@ const props = defineProps<{ data: Message }>()
 
 <style scoped>
 .bubble-chat {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: flex-end;
   padding: 1rem;

@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { useStore } from 'vuex'
 import type { CustomerChatRooms, RootState } from '@/store/types'
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { ChatActions, ChatGetter } from '@/store/enums/ChatsEnums'
 import moment from 'moment'
 
 const store = useStore<RootState>()
+const sidebar = ref<HTMLElement | null>(null)
 
 const customerChatRooms = computed(
   () => store.getters[`chat/${ChatGetter.GET_ALL_CUSTOMER_CHAT_ROOM}`],
 )
+
+const roomId = computed(() => store.getters[`chat/${ChatGetter.GET_ACTIVE_ROOM_ID}`])
 
 const onImageError = (event: Event) => {
   const target = event.target as HTMLImageElement
@@ -24,15 +27,22 @@ const selectRoom = (roomData: CustomerChatRooms) => {
 onMounted(() => {
   store.dispatch(`chat/${ChatActions.GET_ALL_CUSTOMER_CHAT_ROOM}`)
 })
+
+watch(customerChatRooms, () => {
+  if (sidebar.value) {
+    sidebar.value.scrollTop = 0
+  }
+})
 </script>
 
 <template>
-  <aside class="conversation-sidebar">
+  <aside ref="sidebar" class="conversation-sidebar">
     <router-link
       :to="`/chat/${room.room_id}`"
       v-for="room in customerChatRooms"
       :key="room.room_id"
       class="conversation-item"
+      :class="room.room_id === roomId ? 'conversation-active' : ''"
       @click="() => selectRoom(room)"
     >
       <div class="conversation-avatar">
@@ -54,12 +64,12 @@ onMounted(() => {
 <style scoped>
 .conversation-sidebar {
   max-width: 30%;
-  height: 100vh;
+  height: 100%;
   background-color: var(--background-sidebar);
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  border-right: 1px solid var(--border-color);
+  border: 1px solid var(--border-color);
   padding: 1rem;
   display: flex;
   flex-direction: column;

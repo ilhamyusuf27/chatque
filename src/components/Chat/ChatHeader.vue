@@ -37,7 +37,7 @@ const onImageError = (event: Event) => {
   padding: 8px 16px;
   display: flex;
   gap: 1rem;
-  border: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .avatar {
