@@ -27,16 +27,13 @@ const autoResize = () => {
 }
 
 const handleKeydown = (event: KeyboardEvent) => {
-  // Kirim pesan jika Enter ditekan tanpa Shift
   if (event.key === 'Enter' && !event.shiftKey) {
-    // Mencegah perilaku default (membuat baris baru)
     event.preventDefault()
     onSubmit()
   }
 }
 
 const onSubmit = async () => {
-  // Mencegah pengiriman pesan kosong
   if (content.value.trim() === '') {
     return
   }
@@ -46,8 +43,7 @@ const onSubmit = async () => {
   })
   content.value = ''
 
-  // Reset tinggi textarea setelah mengirim
-  await nextTick() // Tunggu DOM update
+  await nextTick()
   autoResize()
 }
 
