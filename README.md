@@ -70,3 +70,20 @@ To run this project locally, follow these steps:
     ```
 
     The application will be available at `http://localhost:5173` or another specified port.
+
+## Developer
+
+<center>
+  <table>
+    <tr>
+      <td align="center">
+        <a href="https://github.com/ilhamyusuf27">
+          <img width="100" src="https://avatars.githubusercontent.com/u/43610978?s=400&u=76c4f9fc270cb7cb6e82570927b32973161aa970&v=4" alt="Fandi"><br/>
+          <sub><b>Ilham Yusuf Alghani</b></sub> <br/>
+          <sub>Front End Web Developer | Back End Web Developer</sub>
+        </a>
+      </td>
+  </table>
+</center>
+
+<p align="right">(<a href="#top">back to top</a>)</p>
