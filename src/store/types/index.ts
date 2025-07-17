@@ -36,9 +36,11 @@ export interface CustomerChatRooms {
 export interface Message {
   id: number
   text: string
-  type: 'text' | 'file' | 'image'
+  type: 'text' | 'file' | 'image' | 'product'
   timestamp: string
   direction: 'sent' | 'receive' | 'system' | 'customer' | 'admin'
+  price?: number
+  productName?: string
 }
 
 export interface ChatState {

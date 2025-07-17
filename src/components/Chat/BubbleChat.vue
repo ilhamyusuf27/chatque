@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Message } from '@/store/types'
-import { generateAltFromUrl } from '@/utils/helpers'
+import { generateAltFromUrl, toRupiah } from '@/utils/helpers'
 import moment from 'moment'
 
 const props = defineProps<{ data: Message }>()
@@ -18,6 +18,11 @@ const props = defineProps<{ data: Message }>()
     </div>
     <div v-else-if="props.data.type === 'file'">
       <img :src="props.data.text.split(' ')[1]" :alt="generateAltFromUrl(props.data.text)" />
+    </div>
+    <div v-else-if="props.data.type === 'product'" class="product">
+      <img :src="props.data.text" :alt="props.data.text" />
+      <p class="product-name">{{ props.data.productName }}</p>
+      <p class="price">{{ toRupiah(props.data.price as number) }}</p>
     </div>
     <div v-if="props.data.direction !== 'system'" class="message-time">
       {{ moment(props.data.timestamp).format('HH:mm') }}
@@ -59,5 +64,24 @@ const props = defineProps<{ data: Message }>()
   font-size: 12px;
   color: var(--text-primary);
   font-weight: 300;
+}
+
+.product {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.product img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1rem;
+}
+
+.product-name {
+  font-size: 20px;
+  font-weight: 700;
 }
 </style>
