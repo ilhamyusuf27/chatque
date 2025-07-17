@@ -15,6 +15,8 @@
 
 Chatque is a simple, frontend-only chat application built with **Vue.js** and **TypeScript**. It allows users to select a chat room, view messages, and send new ones in a clean, modern interface. This project was developed as a technical assessment for a frontend engineer position.
 
+GitHub Repository: [https://github.com/ilhamyusuf27/chatque](https://github.com/ilhamyusuf27/chatque)
+
 ---
 
 ## Features
